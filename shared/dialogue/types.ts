@@ -11,12 +11,17 @@ export interface CorpusPersona {
   tic?: string;
   calls?: string;
   forbidden?: string[];
+  /** 亲密度档 → 语料档位（如 { low: 'gentle', mid: 'soft', high: 'vivid' }） */
+  tierMap?: Record<string, string>;
 }
 
 export interface Corpus {
   species: string;
   version?: string;
+  source?: string;
   persona?: CorpusPersona;
+  /** 物种槽位默认值（call/purr/food/toy 等） */
+  slots?: Record<string, string>;
   intents: Record<string, CorpusIntent>;
 }
 
@@ -34,6 +39,9 @@ export interface DialogueContext {
 
 export interface DialogueResult {
   intent: string;
+  /** 亲密度档（low/mid/high） */
   tier: Tier;
+  /** 语料里实际使用的档位（soft/vivid/gentle 或 low/mid/high） */
+  tierKey?: string;
   line: string;
 }

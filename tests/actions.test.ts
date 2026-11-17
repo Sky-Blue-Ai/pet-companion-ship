@@ -70,27 +70,25 @@ test('清洁：+30 并清除低清洁计时，清洁 >55 时解除生病', () =>
 });
 
 test('对话：返回意图与语气档，亲密 +0.6 并记 first_talk', () => {
-  const r = talkToPet(pet(), '你还记得我们第一次见面吗', CAT, {
+  const r = talkToPet(pet(), '晚安', CAT, {
     memory: { name: '布丁', adoptDate: '11 月 20 日', daysTogether: 7 }
   });
-  assert.equal(r.intent, 'remember');
+  assert.equal(r.intent, 'night');
   assert.equal(r.tier, 'low');
   assert.equal(Math.round(r.pet.stats.intimacy * 10) / 10, 10.6);
   assert.deepEqual(r.newMilestones, ['first_talk']);
   assert.ok(r.lines[0]!.length > 0);
 
-  // 高亲密档才会引用具体日期（记忆槽位只出现在 mid/high 档）
+  // 高亲密档走 vivid 语料，且必须来自该档位池
   const high = talkToPet(
     pet({ stats: { fullness: 50, clean: 70, mood: 50, energy: 40, intimacy: 80 } }),
-    '你还记得我们第一次见面吗',
+    '晚安',
     CAT,
-    { memory: { name: '布丁', adoptDate: '11 月 20 日', daysTogether: 7 }, rng: () => 0.9 }
+    { memory: { name: '布丁' }, rng: () => 0.9 }
   );
   assert.equal(high.tier, 'high');
-  const highPool = CAT.intents.remember!.tiers!.high!;
-  assert.ok(highPool.some((l) => l.includes('{adoptDate}')), '高档语料应至少有一条引用具体日期');
-  assert.ok(highPool.some((l) => l === high.lines[0] || l.replace('{adoptDate}', '11 月 20 日') === high.lines[0]),
-    '返回句必须来自高档语料：' + high.lines[0]);
+  assert.equal(high.tierKey, 'vivid');
+  assert.ok(CAT.intents.night!.tiers!.vivid!.includes(high.lines[0]!), '返回句必须来自 vivid 语料：' + high.lines[0]);
 });
 
 test('广告发奖：每日上限 4 次，超限返回 DAILY_CAP', () => {

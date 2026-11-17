@@ -74,10 +74,10 @@ test('端到端：领养→投喂→玩耍→对话→广告→档案→设置�
   if (played.ok) assert.equal(played.data.pet.counts.play, 1);
 
   // 4) 对话：命中意图并返回语气档
-  const said = await talk('u1', { text: '你还记得我们第一次见面吗' }, deps);
+  const said = await talk('u1', { text: '晚安' }, deps);
   assert.equal(said.ok, true);
   if (said.ok) {
-    assert.equal(said.data.intent, 'remember');
+    assert.equal(said.data.intent, 'night');
     assert.ok(said.data.lines[0]!.length > 0);
   }
 

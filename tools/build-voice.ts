@@ -1,7 +1,7 @@
 /**
  * 语音索引生成（W7）
  *
- * 从语料里抽取所有句子 → voiceId = sha1(text) 前 12 位 → 输出索引表与缺失清单。
+ * 从语料里抽取所有句子 → voiceId = sha1(text) 前 8 位 → 输出索引表与缺失清单。
  * 真正的 TTS 合成由外部命令完成（保持供应商可替换），本工具只负责「契约」。
  *
  * 用法：
@@ -17,7 +17,7 @@ interface Corpus { species: string; intents: Record<string, CorpusIntent> }
 const FILES = ['corpus/cat_orange.json', 'corpus/dog_shiba.json'];
 const OUT = 'voice/index.json';
 
-const sha = (s: string) => createHash('sha1').update(s).digest('hex').slice(0, 12);
+const sha = (s: string) => createHash('sha1').update(s).digest('hex').slice(0, 8); // 与资料库语音包规则一致
 
 function linesOf(c: Corpus): string[] {
   const out = new Set<string>();

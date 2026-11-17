@@ -20,8 +20,17 @@ export function tierOf(intimacy: number): Tier {
 
 /** 槽位白名单，防止语料里写错变量名却静默通过 */
 export const ALLOWED_SLOTS = new Set([
-  'name', 'daysTogether', 'favFood', 'hateFood', 'adoptDate', 'weather', 'todayEvent', 'calls'
+  // 个性化记忆
+  'name', 'daysTogether', 'favFood', 'hateFood', 'adoptDate', 'weather', 'todayEvent',
+  // 物种与语气（资料库语料使用）
+  'calls', 'call', 'soft', 'purr', 'act', 'tail', 'sp', 'pet', 'food', 'toy'
 ]);
+
+/** 亲密度档 → 语料里的实际档位（资料库用 soft/vivid/gentle，需 tierMap 映射） */
+export function resolveTierKey(corpus: Corpus, tier: Tier): string {
+  const map = corpus.persona?.tierMap;
+  return (map && map[tier]) || tier;
+}
 
 /** 填充槽位：返回 null 表示缺值（调用方必须换变体） */
 export function fillTemplate(template: string, ctx: DialogueContext): string | null {
@@ -89,17 +98,29 @@ export function applyPersona(line: string, corpus: Corpus, rnd: () => number = M
 export function respond(corpus: Corpus, text: string, ctx: DialogueContext): DialogueResult {
   const intent = matchIntent(corpus, text);
   const tier = tierOf(ctx.intimacy);
+  const key = resolveTierKey(corpus, tier);
   const tiers = corpus.intents[intent]?.tiers ?? {};
+
+  // 语料自带的物种槽位（喵/汪、软萌词等）作为默认值，用户记忆优先
+  const local: DialogueContext = {
+    ...ctx,
+    memory: { ...(corpus.slots ?? {}), ...ctx.memory }
+  };
+
   const line =
-    pickVariant(tiers[tier], ctx) ??        // 当前语气档
-    pickVariant(tiers.mid, ctx) ??          // 退化到中档
-    pickVariant(tiers.low, ctx) ??          // 再退化
-    pickVariant(tiers.default, ctx) ??      // 兜底档
-    (corpus.intents.fallback_pet ? pickVariant(corpus.intents.fallback_pet.tiers.default, ctx) : null);
+    pickVariant(tiers[key], local) ??
+    pickVariant(tiers.soft, local) ??
+    pickVariant(tiers.gentle, local) ??
+    pickVariant(tiers.vivid, local) ??
+    pickVariant(tiers.mid, local) ??
+    pickVariant(tiers.low, local) ??
+    pickVariant(tiers.default, local) ??
+    pickVariant(corpus.intents.fallback_pet?.tiers.default, local);
 
   return {
     intent,
     tier,
+    tierKey: key,
     line: applyPersona(line ?? '（歪头看了看你）', corpus, ctx.rng)
   };
 }
@@ -111,10 +132,14 @@ export function respondToEvent(
   ctx: DialogueContext
 ): DialogueResult {
   const tier = tierOf(ctx.intimacy);
+  const key = resolveTierKey(corpus, tier);
   const tiers = corpus.intents[eventIntent]?.tiers ?? {};
+  const local: DialogueContext = { ...ctx, memory: { ...(corpus.slots ?? {}), ...ctx.memory } };
   const line =
-    pickVariant(tiers[tier], ctx) ??
-    pickVariant(tiers.default, ctx) ??
-    pickVariant(corpus.intents.fallback_pet?.tiers.default, ctx);
-  return { intent: eventIntent, tier, line: applyPersona(line ?? '（安静地看着你）', corpus, ctx.rng) };
+    pickVariant(tiers[key], local) ??
+    pickVariant(tiers.soft, local) ??
+    pickVariant(tiers.gentle, local) ??
+    pickVariant(tiers.default, local) ??
+    pickVariant(corpus.intents.fallback_pet?.tiers.default, local);
+  return { intent: eventIntent, tier, tierKey: key, line: applyPersona(line ?? '（安静地看着你）', corpus, ctx.rng) };
 }

@@ -162,7 +162,7 @@ export function talkToPet(
   text: string,
   corpus: Corpus,
   ctx: { memory: Record<string, string | number | null | undefined>; usedLines?: Set<string>; rng?: () => number }
-): ActionOutcome & { intent: string; tier: string } {
+): ActionOutcome & { intent: string; tier: string; tierKey?: string } {
   const pet2 = clone(pet);
   const res = respond(corpus, text, {
     memory: ctx.memory,
@@ -183,7 +183,8 @@ export function talkToPet(
     lines: [res.line],
     newMilestones,
     intent: res.intent,
-    tier: res.tier
+    tier: res.tier,
+    tierKey: res.tierKey
   };
 }
 
