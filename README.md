@@ -46,11 +46,16 @@ npm run typecheck
 | W4 | Cocos 3D 四场景、CameraDirector | ⏳ 需你在 Mac 上用编辑器搭（步骤见 docs/cocos-setup.md） |
 | W5 | 骨骼动画接入、动作四段协同 | ⏳ 依赖 3D 资产 |
 | W6 | 广告接入（客户端 AdService + 服务端发奖校验）、埋点 | 🟡 服务端发奖与 Telemetry 已完成；wx 广告 SDK 绑定待接 |
-| W7 | 3D 资产替换、语音包 | 🟡 语音索引工具已完成（329 条待合成）；3D 资产待美术 |
+| W7 | 3D 资产替换、语音包 | 🟡 选料已定 400 条（voice/index.json + select-list.md），音频待 TTS；3D 资产待美术；设计令牌已生成 |
 
 测试：`npm test` → **42 例全过**（结算 13 / 云函数 2 / 动作 9 / 对话 10 / 客户端 6 / 端到端 1 / 语料 1）。
 
 语料校验：`node --experimental-strip-types tools/corpus-lint.ts` → 1206 条，0 错误。
+
+配套产物：
+- `design/tokens.json` → `design/DESIGN_TOKENS.ts`（`tools/build-tokens.ts --write` 生成，禁止手改）
+- `voice/index.json` + `voice/select-list.md`（400 条选料，`tools/build-voice.ts --write`）
+- `tools/import_corpus_md.py`（把资料库 Markdown 语料导入 corpus JSON）
 
 ## 结算引擎的三条硬规则
 
