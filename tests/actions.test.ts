@@ -84,7 +84,7 @@ test('对话：返回意图与语气档，亲密 +0.6 并记 first_talk', () => 
     pet({ stats: { fullness: 50, clean: 70, mood: 50, energy: 40, intimacy: 80 } }),
     '你还记得我们第一次见面吗',
     CAT,
-    { memory: { name: '布丁', adoptDate: '11 月 20 日', daysTogether: 7 } }
+    { memory: { name: '布丁', adoptDate: '11 月 20 日', daysTogether: 7 }, rng: () => 0.9 }
   );
   assert.equal(high.tier, 'high');
   const highPool = CAT.intents.remember!.tiers!.high!;

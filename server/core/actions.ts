@@ -161,14 +161,15 @@ export function talkToPet(
   pet: PetState,
   text: string,
   corpus: Corpus,
-  ctx: { memory: Record<string, string | number | null | undefined>; usedLines?: Set<string> }
+  ctx: { memory: Record<string, string | number | null | undefined>; usedLines?: Set<string>; rng?: () => number }
 ): ActionOutcome & { intent: string; tier: string } {
   const pet2 = clone(pet);
   const res = respond(corpus, text, {
     memory: ctx.memory,
     calls: corpus.persona?.calls,
     intimacy: pet2.stats.intimacy,
-    usedLines: ctx.usedLines
+    usedLines: ctx.usedLines,
+    rng: ctx.rng
   });
   pet2.stats.intimacy = clamp(pet2.stats.intimacy + 0.6, 0, 100);
   pet2.counts.talk += 1;

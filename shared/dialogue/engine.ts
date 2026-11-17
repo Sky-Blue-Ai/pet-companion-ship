@@ -69,7 +69,7 @@ export function pickVariant(
 }
 
 /** 人格滤镜：柴犬拆短句、过长截断、句尾口癖 */
-export function applyPersona(line: string, corpus: Corpus): string {
+export function applyPersona(line: string, corpus: Corpus, rnd: () => number = Math.random): string {
   const persona = corpus.persona ?? {};
   let out = line;
   const max = persona.sentenceMax;
@@ -79,7 +79,7 @@ export function applyPersona(line: string, corpus: Corpus): string {
     if (cut > 2) out = out.slice(0, cut);
   }
   if (max && out.length > max) out = out.slice(0, max);
-  if (persona.tic && out.length <= (max ?? 40) - 4 && !out.includes(persona.tic) && Math.random() < 0.25) {
+  if (persona.tic && out.length <= (max ?? 40) - 4 && !out.includes(persona.tic) && rnd() < 0.25) {
     out = out + persona.tic;
   }
   return out;
@@ -100,7 +100,7 @@ export function respond(corpus: Corpus, text: string, ctx: DialogueContext): Dia
   return {
     intent,
     tier,
-    line: applyPersona(line ?? '（歪头看了看你）', corpus)
+    line: applyPersona(line ?? '（歪头看了看你）', corpus, ctx.rng)
   };
 }
 
@@ -116,5 +116,5 @@ export function respondToEvent(
     pickVariant(tiers[tier], ctx) ??
     pickVariant(tiers.default, ctx) ??
     pickVariant(corpus.intents.fallback_pet?.tiers.default, ctx);
-  return { intent: eventIntent, tier, line: applyPersona(line ?? '（安静地看着你）', corpus) };
+  return { intent: eventIntent, tier, line: applyPersona(line ?? '（安静地看着你）', corpus, ctx.rng) };
 }
