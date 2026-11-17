@@ -1,0 +1,13 @@
+{
+  "name": "pet-companion-ship",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 虚拟宠物陪伴成长 · 微信小游戏（Cocos Creator 3D + 微信云开发）",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:watch": "node --experimental-strip-types --test --watch tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}
