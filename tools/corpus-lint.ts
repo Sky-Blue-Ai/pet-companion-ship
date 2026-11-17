@@ -22,7 +22,7 @@ const REQUIRED_INTENTS = [
 ];
 
 const ALLOWED_SLOTS = new Set([
-  'name', 'daysTogether', 'favFood', 'adoptDate', 'weather', 'todayEvent', 'calls'
+  'name', 'daysTogether', 'favFood', 'hateFood', 'adoptDate', 'weather', 'todayEvent', 'calls'
 ]);
 
 const TIERS = ['low', 'mid', 'high'] as const;

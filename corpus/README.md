@@ -60,6 +60,7 @@
 | {name} | 宠物名 | 变体里必须有不含该槽位的兄弟句 |
 | {daysTogether} | 相识天数 | 同上 |
 | {favFood} | 偏爱食物 | 同上 |
+| {hateFood} | 讨厌的食物 | 同上 |
 | {adoptDate} | 领养日期（11 月 20 日） | 同上 |
 | {weather} | 当前天气 | 同上 |
 | {todayEvent} | 今天它做的一件事 | 同上 |
